@@ -28,7 +28,9 @@ class Perceptron(layout: List[Int], rnd: Random) {
     // respectively on the output Neuron by subtraction of the expected output
     // value minus the actual output value.
     layers.last.zip(0 until outs.length).foreach {case (n, m) => n.expectation(outs(m))}
-    layers.foreach(_.foreach(_.adjust))
+    layers flatMap {
+      _ map (_ adjust)
+    }
   }
  
   override def toString = layers.mkString("\n")
