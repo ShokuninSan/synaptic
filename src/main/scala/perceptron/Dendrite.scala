@@ -1,11 +1,7 @@
 package perceptron
 
-class Dendrite(n: Neuron, w: Double) {
-  // the input neuron
-  val neuron = n
-  // weight of the signal
-  var weight = w
- 
+class Dendrite(neuron: Neuron, private var weight: Double) {
+
   def input = weight * neuron.out;
  
   def updateError(delta: Double) {
@@ -16,5 +12,5 @@ class Dendrite(n: Neuron, w: Double) {
     weight += adjustment * neuron.out
   }
  
-  override def toString = "--["+weight+"]-->"+neuron.name
+  override def toString = "--[" + weight + "]-->" + neuron.name
 }
