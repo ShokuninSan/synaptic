@@ -31,6 +31,12 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Activa
     dendrites.foreach(_.updateError(delta))
   }
 
+  def adjust = {
+    val adjustment = error * derivative(out) * learningRate
+    dendrites.foreach(_.adjust(adjustment))
+    bias += adjustment
+  }
+
   private def connect(ns: List[Neuron]): List[Dendrite] =
     ns.map(n => new Dendrite(n, (new Random).nextDouble * 2 * pow(ns.size, -0.5) - 1))
 

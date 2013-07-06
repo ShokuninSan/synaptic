@@ -1,8 +1,9 @@
 package perceptron
 
 import scala.util.Random
+import ActivationFunctions._
 
-class Perceptron(layout: List[Int]) {
+class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = HyperbolicTangent) {
   val layers = build(layout)
 
   def run(ins: List[Double]) = {
@@ -41,5 +42,10 @@ class Perceptron(layout: List[Int]) {
     }.reverse.tail
 
   private def buildLayer(name: String, n: Int, lower: List[Neuron]) =
-    (0 until n) map { n => new Neuron(name+"N"+n, lower) with HyperbolicTangent } toList
+    (0 until n) map { n =>
+      activation match {
+        case HyperbolicTangent => new Neuron(name+"N"+n, lower) with HyperbolicTangent
+        case Sigmoid => new Neuron(name+"N"+n, lower) with Sigmoid
+      }
+    } toList
 }
