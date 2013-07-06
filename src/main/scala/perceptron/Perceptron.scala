@@ -2,16 +2,16 @@ package perceptron
 
 import scala.util.Random
 
-class Perceptron(layout: List[Int], rnd: Random) {
-  val layers = build(layout, rnd)
- 
+class Perceptron(layout: List[Int]) {
+  val layers = build(layout)
+
   def run(ins: List[Double]) = {
     // Set output of input-neurons to the given values
     layers.head.zip(ins).foreach { case (n, in) => n.out = in }
     // Call 'output' function of each neuron on each layer
     layers.tail.foldLeft(ins) { (z, l) => l.map(_.output) }
   }
- 
+
   def train(ins: List[Double], outs: List[Double]) = {
     // 1. Run with the given input:
     // Sets the output of the input-neurons to the given values and calls the
@@ -27,20 +27,19 @@ class Perceptron(layout: List[Int], rnd: Random) {
     // calculated on the Axon (for hidden layers) by multiplication of it's weight
     // respectively on the output Neuron by subtraction of the expected output
     // value minus the actual output value.
-    layers.last.zip(0 until outs.length).foreach {case (n, m) => n.expectation(outs(m))}
+    layers.last.zip(0 until outs.length).foreach {case (n, m) => n.backpropagate(outs(m))}
     layers flatMap {
       _ map (_ adjust)
     }
   }
- 
+
   override def toString = layers.mkString("\n")
- 
-  private def build(layout: List[Int], rnd: Random) =
+
+  private def build(layout: List[Int]) =
     layout.zip(1 to layout.size).foldLeft(List(List[Neuron]())) {
-      case (previousLayer, (neuronIndex, layer)) => buildLayer("L"+layer, neuronIndex, previousLayer.head, rnd) :: previousLayer
+      case (previousLayer, (neuronIndex, layer)) => buildLayer("L"+layer, neuronIndex, previousLayer.head) :: previousLayer
     }.reverse.tail
- 
- 
-  private def buildLayer(name: String, n: Int, lower: List[Neuron], rnd: Random) =
-    (0 until n) map { n => new Neuron(name+"N"+n, lower, rnd) } toList
+
+  private def buildLayer(name: String, n: Int, lower: List[Neuron]) =
+    (0 until n) map { n => new Neuron(name+"N"+n, lower) with HyperbolicTangent } toList
 }
