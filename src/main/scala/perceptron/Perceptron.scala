@@ -44,8 +44,8 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
   private def buildLayer(name: String, n: Int, lower: List[Neuron]) =
     (0 until n) map { n =>
       activation match {
-        case HyperbolicTangent => new Neuron(name+"N"+n, lower) with HyperbolicTangent
-        case Sigmoid => new Neuron(name+"N"+n, lower) with Sigmoid
+        case HyperbolicTangent => new NeuronImpl(name+"N"+n, lower) with HyperbolicTangent
+        case Sigmoid => new NeuronImpl(name+"N"+n, lower) with Sigmoid
       }
     } toList
 }
