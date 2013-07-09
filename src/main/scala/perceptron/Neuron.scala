@@ -8,13 +8,13 @@ trait Neuron {
   val name: String
   val dendrites: List[Dendrite]
 
-  // out   ... the output value of the neuron
   // error ... indicated the error rate which should converge against 0 in each training epoch
   // bias  ... the threshold where the neuron fires
-  var (out, error, bias, learningRate) = (0.0, 0.0, (new Random).nextDouble * 2.0 - 1.0, 0.1)
+  protected var (error, bias, learningRate) = (0.0, (new Random).nextDouble * 2.0 - 1.0, 0.1)
+  protected def input: Double
 
-  def input: Double
-  def output: Double
+  var output: Double = 0.0
+  def fire: Double
   def adjust: Unit
 
   /**
@@ -43,12 +43,9 @@ abstract class NeuronImpl(val name: String, inputLayer: List[Neuron]) extends Ne
     dendrites.map(_.input).sum + bias;
   }
 
-  def output = {
-    out = activate(input)
-    out
-  }
+  def fire = { output = activate(input); output }
 
-  def backpropagate(expected: Double) = updateError(expected - out)
+  def backpropagate(expected: Double) = updateError(expected - output)
  
   def updateError(delta: Double) {
     error += delta
@@ -56,7 +53,7 @@ abstract class NeuronImpl(val name: String, inputLayer: List[Neuron]) extends Ne
   }
 
   def adjust = {
-    val adjustment = error * derivativeFunction(out) * learningRate
+    val adjustment = error * derivativeFunction(output) * learningRate
     dendrites.foreach(_.adjust(adjustment))
     bias += adjustment
   }

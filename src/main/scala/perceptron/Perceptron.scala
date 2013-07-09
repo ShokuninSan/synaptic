@@ -8,9 +8,9 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
 
   def run(ins: List[Double]) = {
     // Set output of input-neurons to the given values
-    layers.head.zip(ins).foreach { case (n, in) => n.out = in }
+    layers.head.zip(ins).foreach { case (n, in) => n.output = in }
     // Call 'output' function of each neuron on each layer
-    layers.tail.foldLeft(Nil: List[Double]) { (_, l) => l.map(_.output) }
+    layers.tail.foldLeft(Nil: List[Double]) { (_, l) => l.map(_.fire) }
   }
 
   def train(ins: List[Double], outs: List[Double]) = {
