@@ -18,7 +18,7 @@ trait Soma {
 
   var output: Double = 0.0
   def fire: Future[Double]
-  def adjust: Unit
+  def adjust: Future[Double]
 
   /**
    * This function is called on the output neuron within the training epochs.
@@ -32,8 +32,8 @@ trait Soma {
    *
    * @param expected value for output neuron
    */
-  def backPropagate(expected: Double): Unit
-  def updateError(delta: Double): Unit
+  def backPropagate(expected: Double): Future[Double]
+  def updateError(delta: Double): Future[Double]
 
 }
 
@@ -62,17 +62,19 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
 
   def out: Double = output
 
-  def backPropagate(expected: Double) = updateError(expected - output)
+  def backPropagate(expected: Double): Future[Double] = updateError(expected - output)
  
-  def updateError(delta: Double) {
+  def updateError(delta: Double): Future[Double] = Future {
     error += delta
     dendrites.foreach(_.updateError(delta))
+    error
   }
 
-  def adjust = {
+  def adjust: Future[Double] = Future {
     val adjustment = error * derivativeFunction(output) * learningRate
     dendrites.foreach(_.adjust(adjustment))
     bias += adjustment
+    bias
   }
 
   private def connect(ns: List[Neuron]): List[Dendrite] = ns.map { n =>
