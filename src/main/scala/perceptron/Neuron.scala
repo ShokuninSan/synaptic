@@ -2,16 +2,17 @@ package perceptron
 
 import scala.math._
 import scala.util.Random
+import ActivationFunctions._
 
-trait Neuron {
+trait Soma {
 
   val name: String
   val dendrites: List[Dendrite]
 
   // error ... indicated the error rate which should converge against 0 in each training epoch
   // bias  ... the threshold where the neuron fires
-  protected var (error, bias, learningRate) = (0.0, (new Random).nextDouble * 2.0 - 1.0, 0.1)
-  protected def input: Double
+  var (error, bias, learningRate) = (0.0, (new Random).nextDouble * 2.0 - 1.0, 0.1)
+  def input: Double
 
   var output: Double = 0.0
   def fire: Double
@@ -29,23 +30,34 @@ trait Neuron {
    *
    * @param expected value for output neuron
    */
-  def backpropagate(expected: Double): Unit
+  def backPropagate(expected: Double): Unit
   def updateError(delta: Double): Unit
 
 }
 
-abstract class NeuronImpl(val name: String, inputLayer: List[Neuron]) extends Neuron with Activation {
+object Neuron {
+  def apply(name: String, lower: List[Neuron], activation: ActivationFunctions.Value): Neuron = activation match {
+    case HyperbolicTangent => new Neuron(name, lower) with HyperbolicTangent
+    case Sigmoid => new Neuron(name, lower) with Sigmoid
+  }
+}
+
+abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma with Activation {
 
   val dendrites = connect(inputLayer)
 
-  def input = {
+  def input: Double = {
     error = 0.0 // error reset on new input
-    dendrites.map(_.input).sum + bias;
+    dendrites.map(_.input).sum + bias
   }
+
+  def feed(input: Double) = output = input
 
   def fire = { output = activate(input); output }
 
-  def backpropagate(expected: Double) = updateError(expected - output)
+  def out: Double = output
+
+  def backPropagate(expected: Double) = updateError(expected - output)
  
   def updateError(delta: Double) {
     error += delta
@@ -58,7 +70,9 @@ abstract class NeuronImpl(val name: String, inputLayer: List[Neuron]) extends Ne
     bias += adjustment
   }
 
-  private def connect(ns: List[Neuron]): List[Dendrite] = ns.map(n => new Dendrite(n, (new Random).nextDouble * 2 * pow(ns.size, -0.5) - 1))
+  private def connect(ns: List[Neuron]): List[Dendrite] = ns.map { n =>
+    new Dendrite(n, (new Random).nextDouble * 2 * pow(ns.size, -0.5) - 1)
+  }
 
   override def toString = name + "[" + dendrites.mkString(",") + "]\n   "
 

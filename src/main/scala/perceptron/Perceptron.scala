@@ -1,16 +1,16 @@
 package perceptron
 
-import scala.util.Random
 import ActivationFunctions._
 
 class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = HyperbolicTangent) {
+
   val layers = build(layout)
 
-  def run(ins: List[Double]) = {
+  def run(ins: List[Double]): List[Double] = {
     // Set output of input-neurons to the given values
-    layers.head.zip(ins).foreach { case (n, in) => n.output = in }
-    // Call 'output' function of each neuron on each layer
-    layers.tail.foldLeft(Nil: List[Double]) { (_, l) => l.map(_.fire) }
+    layers.head.zip(ins).foreach { case (n, in) => n feed in }
+    // Call 'output' function of each neuron on each but the first layer
+    layers.tail.foldLeft(Nil: List[Double]) { (_, layer) => layer.map(neuron => neuron fire) }
   }
 
   def train(ins: List[Double], outs: List[Double]) = {
@@ -28,7 +28,7 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
     // calculated on the Axon (for hidden layers) by multiplication of it's weight
     // respectively on the output Neuron by subtraction of the expected output
     // value minus the actual output value.
-    layers.last.zip(0 until outs.length).foreach {case (n, m) => n.backpropagate(outs(m))}
+    layers.last.zip(0 until outs.length).foreach {case (n, m) => n backPropagate(outs(m))}
     layers flatMap {
       _ map (_ adjust)
     }
@@ -38,14 +38,8 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
 
   private def build(layout: List[Int]) =
     layout.zip(1 to layout.size).foldLeft(List(List[Neuron]())) {
-      case (previousLayer, (neuronIndex, layer)) => buildLayer("L"+layer, neuronIndex, previousLayer.head) :: previousLayer
+      case (previousLayer, (neuronIndex, layer)) => buildLayer(s"L$layer", neuronIndex, previousLayer.head) :: previousLayer
     }.reverse.tail
 
-  private def buildLayer(name: String, n: Int, lower: List[Neuron]) =
-    (0 until n) map { n =>
-      activation match {
-        case HyperbolicTangent => new NeuronImpl(name+"N"+n, lower) with HyperbolicTangent
-        case Sigmoid => new NeuronImpl(name+"N"+n, lower) with Sigmoid
-      }
-    } toList
+  private def buildLayer(name: String, n: Int, lower: List[Neuron]) = (0 until n) map { n => Neuron(s"$name-N$n", lower, activation)} toList
 }

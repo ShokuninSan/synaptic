@@ -1,6 +1,5 @@
 package perceptron
 
-import scala.util.Random
 
 object XOR extends App {
   // The index of the list represents the layer # and the

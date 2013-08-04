@@ -1,7 +1,6 @@
 package perceptron
 
 import scala.math._
-import scala.util.Random
 
 object ActivationFunctions extends Enumeration {
 
@@ -13,7 +12,9 @@ object ActivationFunctions extends Enumeration {
 trait Activation {
 
   def activate(input: Double): Double
+
   def derivativeFunction(out: Double): Double
+
   def activationFunction(x: Double): Double
 
 }
