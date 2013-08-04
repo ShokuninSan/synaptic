@@ -3,6 +3,8 @@ package perceptron
 import scala.math._
 import scala.util.Random
 import ActivationFunctions._
+import scala.concurrent.{ExecutionContext, Future}
+import ExecutionContext.Implicits.global
 
 trait Soma {
 
@@ -15,7 +17,7 @@ trait Soma {
   def input: Double
 
   var output: Double = 0.0
-  def fire: Double
+  def fire: Future[Double]
   def adjust: Unit
 
   /**
@@ -53,7 +55,10 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
 
   def feed(input: Double) = output = input
 
-  def fire = { output = activate(input); output }
+  def fire = Future {
+    output = activate(input)
+    output
+  }
 
   def out: Double = output
 

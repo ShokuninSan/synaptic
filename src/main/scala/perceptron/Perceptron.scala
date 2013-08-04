@@ -1,6 +1,9 @@
 package perceptron
 
 import ActivationFunctions._
+import scala.concurrent.{Await, Future, ExecutionContext}
+import ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = HyperbolicTangent) {
 
@@ -10,7 +13,9 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
     // Set output of input-neurons to the given values
     layers.head.zip(ins).foreach { case (n, in) => n feed in }
     // Call 'output' function of each neuron on each but the first layer
-    layers.tail.foldLeft(Nil: List[Double]) { (_, layer) => layer.map(neuron => neuron fire) }
+    // Note that we're just interested in the output neurons
+    val futures = (layers.tail map { _ map { _ fire } }).last
+    Await.result(Future.sequence(futures), 5 seconds)
   }
 
   def train(ins: List[Double], outs: List[Double]) = {
