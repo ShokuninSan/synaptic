@@ -6,71 +6,33 @@ import ActivationFunctions._
 import scala.concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
 
-trait Soma {
-
-  val name: String
-  val dendrites: List[Dendrite]
-
-  // error ... indicated the error rate which should converge against 0 in each training epoch
-  // bias  ... the threshold where the neuron fires
-  var (error, bias, learningRate) = (0.0, (new Random).nextDouble * 2.0 - 1.0, 0.1)
-  def input: Double
-
-  var output: Double = 0.0
-  def fire: Future[Double]
-  def adjust: Future[Double]
-
-  /**
-   * This function is called on the output neuron within the training epochs.
-   *
-   * Once this function is called on the output neuron, the whole networks neurons
-   * will be updated recursively, i.e. their 'error' field gets updated by a delta
-   * (which is calculated on the dendrites &rarr; delta * weight.
-   *
-   * Both, the expectation and {Neuron, Dentrite}.updateError functions form the
-   * backpropagation-rule.
-   *
-   * @param expected value for output neuron
-   */
-  def backPropagate(expected: Double): Future[Double]
-  def updateError(delta: Double): Future[Double]
-
-}
-
-object Neuron {
-  def apply(name: String, lower: List[Neuron], activation: ActivationFunctions.Value): Neuron = activation match {
-    case HyperbolicTangent => new Neuron(name, lower) with HyperbolicTangent
-    case Sigmoid => new Neuron(name, lower) with Sigmoid
-  }
-}
-
 abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma with Activation {
 
   val dendrites = connect(inputLayer)
 
-  def input: Double = {
+  override def input: Double = {
     error = 0.0 // error reset on new input
     dendrites.map(_.input).sum + bias
   }
 
   def feed(input: Double) = output = input
 
-  def fire = Future {
+  override def fire = Future {
     output = activate(input)
     output
   }
 
   def out: Double = output
 
-  def backPropagate(expected: Double): Future[Double] = updateError(expected - output)
+  override def backPropagate(expected: Double): Future[Double] = updateError(expected - output)
  
-  def updateError(delta: Double): Future[Double] = Future {
+  override def updateError(delta: Double): Future[Double] = Future {
     error += delta
     dendrites.foreach(_.updateError(delta))
     error
   }
 
-  def adjust: Future[Double] = Future {
+  override def adjust: Future[Double] = Future {
     val adjustment = error * derivativeFunction(output) * learningRate
     dendrites.foreach(_.adjust(adjustment))
     bias += adjustment
@@ -82,5 +44,14 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
   }
 
   override def toString = name + "[" + dendrites.mkString(",") + "]\n   "
+
+}
+
+object Neuron {
+
+  def apply(name: String, lower: List[Neuron], activation: ActivationFunctions.Value): Neuron = activation match {
+    case HyperbolicTangent => new Neuron(name, lower) with HyperbolicTangent
+    case Sigmoid => new Neuron(name, lower) with Sigmoid
+  }
 
 }
