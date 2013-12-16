@@ -25,17 +25,22 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
    *
    *  1. Run with the given input:
    *    Sets the output of the input-neurons to the given values and calls the
-   *    'output' function of each neuron within each layer of the network. The
-   *    'output' function of the Neurons are the activation-functions (i.e.
-   *    tangens hyperbolicus or logistic function). The run function below
+   *    'fire' function of each neuron within each layer of the network. The
+   *    'fire' function of the Neurons are the activation-functions (i.e.
+   *    tangens hyperbolicus or logistic/sigmoid function). The run function below
    *    returns the output of the the last neuron, the output neuron.
    *
-   *  2. Backpropagation:
-   *    Take the last neuron (the output neuron) and update the 'error' fields
+   *  2. Backpropagation - step 1:
+   *    Take the last neuron (the output neuron) and updates the 'error' fields
    *    on each neuron of the network recursively by adding a delta, which is
    *    calculated on the Axon (for hidden layers) by multiplication of it's
    *    weight respectively on the output Neuron by subtraction of the expected
-   *    output value minus the actual output value.
+   *    output value minus the actual output value. This is done by execution of
+   *    the [[perceptron.Neuron.updateError()]] functions.
+   *
+   *  3. Backpropagation - step 2:
+   *    Calculates the bias via the derivative activation function multiplied by
+   *    the corresponding result of the 'error' calculation of step 1.
    *
    * @param ins Sets the output of the input-neurons to the given values
    * @param outs Expected output values
