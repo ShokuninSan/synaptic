@@ -47,20 +47,20 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
    */
   def train(ins: List[Double], outs: List[Double]): Future[List[Double]] =
     for {
-      a <- run(ins)
-      b <- _backPropagate(outs)
-      c <- _adjust
-    } yield c
+      _ <- run(ins)
+      _ <- backPropagate(outs)
+      delta <- adjust
+    } yield delta
 
-  private def _backPropagate(outs: List[Double]): Future[List[Double]] = Future.sequence(layers.last.zip(0 until outs.length) map (t => t._1.backPropagate(outs(t._2))))
+  private def backPropagate(outs: List[Double]): Future[List[Double]] = Future.sequence(layers.last.zip(0 until outs.length) map (t => t._1.backPropagate(outs(t._2))))
 
-  private def _adjust: Future[List[Double]] = Future.sequence(layers flatMap { _ map (_ adjust) })
-
-  override def toString = layers.mkString("\n")
+  private def adjust: Future[List[Double]] = Future.sequence(layers flatMap { _ map (_ adjust) })
 
   private def build(layout: List[Int]): List[List[Neuron]] = layout.zip(1 to layout.size).foldLeft(List(List[Neuron]())) {
       case (previousLayer, (neuronIndex, layer)) => buildLayer(s"L$layer", neuronIndex, previousLayer.head) :: previousLayer
     }.reverse.tail
 
   private def buildLayer(name: String, n: Int, lower: List[Neuron]) = (0 until n) map { n => Neuron(s"$name-N$n", lower, activation)} toList
+
+  override def toString = layers.mkString("\n")
 }

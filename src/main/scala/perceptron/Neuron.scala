@@ -119,7 +119,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    *
    * [[perceptron.Neuron.connect()]] connects (as the name implies) this Neuron via [[perceptron.Dendrite]]s to the
    * corrensponding input layer, i.e. either input Neurons or Neurons of a hidden layer. The Dendrites are created
-   * with a random weight.
+   * with a random weight. The weights are choosen randomly between -1 and +1.
    *
    * @param ns `List[Neuron]` List of input Neurons
    * @return `List[Dendrite]` which is added to the immutable `dendrites` property on instantiation of this Neuron
@@ -128,7 +128,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
     new Dendrite(n, (new Random).nextDouble * 2 * pow(ns.size, -0.5) - 1)
   }
 
-  override def toString = name + "[" + dendrites.mkString(",") + "]\n   "
+  override def toString = name + "[" + dendrites.mkString(",") + "]\n"
 
 }
 
