@@ -100,6 +100,23 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
   }
 
   /**
+   * This function implements the computation of the deltaj as part of the backpropagation rule:
+   *
+   *   f'(netj) (tj-oj)           ... in case of an output Neuron, or
+   *   f'(netj) sum(deltak * wjk) ... in case of a hidden Neuron
+   *
+   * The return value of this function gets applied to
+   *
+   * 1) the computation of weigths of each input Neuron: see [[perceptron.Neuron.adjust]] and [[perceptron.Dendrite.adjust]]
+   * 2) the computation of the Bias (on-Neuron): see [[perceptron.Neuron.adjust]]
+   *
+   * See also book Simulation Neuronaler Netze, A. Zell (2000), ch. 5.9.4 Backpropagation-Regel on page 86, figure 5.31.
+   *
+   * @return The deltaj
+   */
+  def deltaj = derivativeFunction(output) * error
+
+  /**
    * Completes the backpropagation process.
    *
    * This function calculates the adjustment for the `bias` which is added to the sum of the input weights within the
@@ -109,7 +126,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    *   </a>
    */
   override def adjust: Future[Double] = Future {
-    val adjustment = error * derivativeFunction(output) * learningRate
+    val adjustment = learningRate * deltaj
     dendrites.foreach(_.adjust(adjustment))
     bias += adjustment
     bias

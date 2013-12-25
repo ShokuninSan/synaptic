@@ -44,7 +44,7 @@ trait BackpropagationTrainer {
         delta <- adjust
       } yield delta
     for (i <- 1 to iterations) {
-      patterns foreach {
+      patterns map {
         _ match {
           case Pattern(input, output) => Util.await(go(input, output))
         }
