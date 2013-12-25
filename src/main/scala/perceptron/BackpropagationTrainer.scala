@@ -33,14 +33,14 @@ trait BackpropagationTrainer {
    *    Calculates the bias via the derivative activation function multiplied by
    *    the corresponding result of the 'error' calculation of step 1.
    *
-   * @param ins Sets the output of the input-neurons to the given values
-   * @param outs Expected output values
+   * @param patterns The training data
+   * @param iterations Number of max iterations
    */
   def train(patterns: List[Pattern], iterations: Int) = {
-    def go(ins: List[Double], outs: List[Double]): Future[List[Double]] =
+    def go(inputs: List[Double], outputs: List[Double]): Future[List[Double]] =
       for {
-        _ <- run(ins)
-        _ <- backPropagate(outs)
+        _ <- run(inputs)
+        _ <- backPropagate(outputs)
         delta <- adjust
       } yield delta
     for (i <- 1 to iterations) {
@@ -52,8 +52,10 @@ trait BackpropagationTrainer {
     }
   }
 
-  private def backPropagate(outs: List[Double]): Future[List[Double]] = Future.sequence(layers.last.zip(0 until outs.length) map (t => t._1.backPropagate(outs(t._2))))
+  private def backPropagate(outs: List[Double]): Future[List[Double]] =
+    Future.sequence(layers.last.zip(0 until outs.length) map (t => t._1.backPropagate(outs(t._2))))
 
-  private def adjust: Future[List[Double]] = Future.sequence(layers flatMap { _ map (_ adjust) })
+  private def adjust: Future[List[Double]] =
+    Future.sequence(layers flatMap { _ map (_ adjust) })
 
 }

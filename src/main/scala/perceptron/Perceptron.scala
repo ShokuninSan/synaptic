@@ -6,7 +6,7 @@ import ExecutionContext.Implicits.global
 
 class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = HyperbolicTangent) extends BackpropagationTrainer {
 
-  val layers = build(layout)
+  val layers: List[List[Neuron]] = spanNetwork(layout)
 
   def run(ins: List[Double]): Future[List[Double]] = {
     // Set output of input-neurons to the given values
@@ -17,11 +17,14 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
     Future.sequence(futures)
   }
 
-  private def build(layout: List[Int]): List[List[Neuron]] = layout.zip(1 to layout.size).foldLeft(List(List[Neuron]())) {
-      case (previousLayer, (neuronIndex, layer)) => buildLayer(s"L$layer", neuronIndex, previousLayer.head) :: previousLayer
+  private def spanNetwork(layout: List[Int]): List[List[Neuron]] =
+    layout.zip(1 to layout.size).foldLeft(List(List[Neuron]())) {
+      case (previousLayer, (neuronIndex, layer)) =>
+        createLayer(s"Layer($layer)", neuronIndex, previousLayer.head) :: previousLayer
     }.reverse.tail
 
-  private def buildLayer(name: String, n: Int, lower: List[Neuron]) = (0 until n) map { n => Neuron(s"$name-N$n", lower, activation)} toList
+  private def createLayer(name: String, n: Int, lower: List[Neuron]) =
+    (0 until n) map { n => Neuron(s"$name-Neuron($n)", lower, activation)} toList
 
   override def toString = layers.mkString("\n")
 }

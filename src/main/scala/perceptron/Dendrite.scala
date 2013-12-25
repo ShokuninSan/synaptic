@@ -55,6 +55,6 @@ class Dendrite(neuron: Neuron, private var weight: Double) {
    */
   def adjust(adjustment: Double) = weight += adjustment * neuron.out
 
-  override def toString = "--[" + weight + "]-->" + neuron
+  override def toString = s"$neuron - [ $weight ] ->"
 
 }

@@ -129,7 +129,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
     new Dendrite(n, (new Random).nextDouble * 2 * pow(ns.size, -0.5) - 1)
   }
 
-  override def toString = name + "[" + dendrites.mkString(",") + "]\n"
+  override def toString = s"${dendrites.mkString(",")} $name\n"
 
 }
 
