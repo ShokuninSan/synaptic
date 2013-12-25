@@ -9,12 +9,15 @@ object XOR extends App {
 
   def await(future: Future[List[Double]]): List[Double] = Await.result(future, 5 seconds)
 
-  for (i <- 1 to 150) {
-    await(net.train(List(1.0, 1.0), List(-1.0)))
-    await(net.train(List(-1.0, -1.0), List(-1.0)))
-    await(net.train(List(1.0, -1.0), List(1.0)))
-    await(net.train(List(-1.0, 1.0), List(1.0)))
-  }
+  net.train(
+    List(
+      Pattern(List(1., 1.), List(0.)),
+      Pattern(List(1., 0.), List(1.)),
+      Pattern(List(0., 1.), List(1.)),
+      Pattern(List(0., 0.), List(0.))
+    ),
+    iterations = 150
+  )
 
   println("Training done.")
   println("** Output for (1,1) "   + await(net.run(List(1.0, 1.0))))
