@@ -107,8 +107,8 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    *
    * The return value of this function gets applied to
    *
-   * 1) the computation of weigths of each input Neuron: see [[perceptron.Neuron.adjust]] and [[perceptron.Dendrite.adjust]]
-   * 2) the computation of the Bias (on-Neuron): see [[perceptron.Neuron.adjust]]
+   * 1) the computation of weigths of each input Neuron: see [[perceptron.Neuron.applyDeltaRule]] and [[perceptron.Dendrite.applyDeltaRule()]]
+   * 2) the computation of the Bias (on-Neuron): see [[perceptron.Neuron.applyDeltaRule]]
    *
    * See also book Simulation Neuronaler Netze, A. Zell (2000), ch. 5.9.4 Backpropagation-Regel on page 86, figure 5.31.
    *
