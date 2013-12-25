@@ -117,10 +117,17 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
   def deltaj = derivativeFunction(output) * error
 
   /**
-   * Completes the backpropagation process.
+   * Completes the backpropagation process by applying the `deltawij` to the weights of the input Neurons as well as to
+   * the Bias (on-Neuron).
    *
-   * This function calculates the adjustment for the `bias` which is added to the sum of the input weights within the
-   * next forward propagation cycle. See also:
+   * This function computes:
+   *
+   * 1) the deltawij as described in Simulation Neuronaler Netze, A. Zell (2000), ch. 5.9.4 Backpropagation-Regel on
+   *    page 86, figure 5.30
+   * 2) the adjustment for the Bias which is added to the sum of the input weights within the next forward propagation
+   * cycle.
+   *
+   * See also:
    *   <a href="http://stackoverflow.com/questions/2480650/role-of-bias-in-neural-networks">
    *     Role of Bias in Neural Networks @ StackOverflow
    *   </a>
