@@ -22,7 +22,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    * @return
    */
   override def input: Double = {
-    error = 0.0 // error reset on new input
+    error = 0.0
     dendrites.map(_.input).sum + bias
   }
 
@@ -103,9 +103,10 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    * Completes the backpropagation process.
    *
    * This function calculates the adjustment for the `bias` which is added to the sum of the input weights within the
-   * next forward propagation cycle.
-   *
-   * @return
+   * next forward propagation cycle. See also:
+   *   <a href="http://stackoverflow.com/questions/2480650/role-of-bias-in-neural-networks">
+   *     Role of Bias in Neural Networks @ StackOverflow
+   *   </a>
    */
   override def adjust: Future[Double] = Future {
     val adjustment = error * derivativeFunction(output) * learningRate
