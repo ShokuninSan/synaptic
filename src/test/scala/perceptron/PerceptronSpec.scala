@@ -113,4 +113,23 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
     await(net.run(List(1., 0.))).head should be (0. plusOrMinus 0.2)
     await(net.run(List(0., 0.))).head should be (1. plusOrMinus 0.2)
   }
+
+  it should "be able to solve XOR with Sigmoid activation function" in {
+
+    val net = new Perceptron(List(2,3,1), Sigmoid)
+
+    // training
+    for (i <- 1 to 2000) {
+      await(net.train(List(1., 1.), List(0.)))
+      await(net.train(List(1., 0.), List(1.)))
+      await(net.train(List(0., 1.), List(1.)))
+      await(net.train(List(0., 0.), List(0.)))
+    }
+
+    // run
+    await(net.run(List(1., 1.))).head should be (0. plusOrMinus 0.2)
+    await(net.run(List(0., 1.))).head should be (1. plusOrMinus 0.2)
+    await(net.run(List(1., 0.))).head should be (1. plusOrMinus 0.2)
+    await(net.run(List(0., 0.))).head should be (0. plusOrMinus 0.2)
+  }
 }
