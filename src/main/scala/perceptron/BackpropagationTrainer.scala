@@ -36,7 +36,7 @@ trait BackpropagationTrainer {
    * @param patterns The training data
    * @param iterations Number of max iterations
    */
-  def train(patterns: List[Pattern], iterations: Int) = {
+  def train(patterns: List[Pattern], iterations: Int): Unit = {
     def go(inputs: List[Double], outputs: List[Double]): Future[List[Double]] =
       for {
         _ <- run(inputs)

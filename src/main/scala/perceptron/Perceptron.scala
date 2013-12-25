@@ -23,7 +23,7 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
         createLayer(s"Layer($layer)", neuronIndex, previousLayer.head) :: previousLayer
     }.reverse.tail
 
-  private def createLayer(name: String, n: Int, lower: List[Neuron]) =
+  private def createLayer(name: String, n: Int, lower: List[Neuron]): List[Neuron] =
     (0 until n) map { n => Neuron(s"$name-Neuron($n)", lower, activation)} toList
 
   override def toString = layers.mkString("\n")

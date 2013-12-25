@@ -53,7 +53,7 @@ class Dendrite(neuron: Neuron, private var weight: Double) {
    *                   of the upstream Neuron, thus it's the result of i.e. `deltawij = eta * deltaj * _` where the _ is
    *                   the output which gets applied whithin this function finally.
    */
-  def adjust(adjustment: Double) = weight += adjustment * neuron.out
+  def adjust(adjustment: Double): Unit = weight += adjustment * neuron.out
 
   override def toString = s"$neuron - [ $weight ] ->"
 

@@ -8,7 +8,7 @@ import ExecutionContext.Implicits.global
 
 abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma with Activation {
 
-  val dendrites = connect(inputLayer)
+  val dendrites: List[Dendrite] = connect(inputLayer)
 
   /**
    * This function calculates and finally returns the input for this Neuron.
@@ -35,7 +35,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    *
    * @param input Input value for the given Network.
    */
-  def feed(input: Double) = output = input
+  def feed(input: Double): Unit = output = input
 
   /**
    * Forward propagation of input.
@@ -50,7 +50,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    *
    * @return Future[Double] the output of the Neuron
    */
-  override def fire = Future {
+  override def fire: Future[Double] = Future {
     output = activate(input)
     output
   }
@@ -114,7 +114,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    *
    * @return The deltaj
    */
-  def deltaj = derivativeFunction(output) * error
+  def deltaj: Double = derivativeFunction(output) * error
 
   /**
    * Completes the backpropagation process by applying the `deltawij` to the weights of the input Neurons as well as to
@@ -125,7 +125,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    * 1) the deltawij as described in Simulation Neuronaler Netze, A. Zell (2000), ch. 5.9.4 Backpropagation-Regel on
    *    page 86, figure 5.30
    * 2) the adjustment for the Bias which is added to the sum of the input weights within the next forward propagation
-   * cycle.
+   *    cycle.
    *
    * See also:
    *   <a href="http://stackoverflow.com/questions/2480650/role-of-bias-in-neural-networks">
