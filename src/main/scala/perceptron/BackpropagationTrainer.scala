@@ -2,6 +2,7 @@ package perceptron
 
 import scala.concurrent.{Future,ExecutionContext}
 import ExecutionContext.Implicits.global
+import scala.math._
 
 case class Pattern(input: List[Double], output: List[Double])
 
@@ -41,15 +42,20 @@ trait BackpropagationTrainer {
       for {
         _ <- run(inputs)
         _ <- backPropagate(outputs)
-        delta <- applyDeltaRule
-      } yield delta
-    for (i <- 1 to iterations) {
-      patterns map {
-        _ match {
-          case Pattern(input, output) => Util.await(go(input, output))
+        output <- applyDeltaRule
+      } yield output
+    def satisfactory(input: List[Double], output: List[Double]): Boolean =
+      ((input zip output).foldLeft(0.0)((a,b) => a + abs(b._1 + b._2)) <= 0.01)
+    for {
+      _ <- 1 to iterations
+      t <-
+        patterns map {
+          _ match {
+            case Pattern(input, output) => (Util.await(go(input, output)), output)
+          }
         }
-      }
-    }
+      if (!(satisfactory _).tupled(t))
+    } yield ()
   }
 
   private def backPropagate(outs: List[Double]): Future[List[Double]] =

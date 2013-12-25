@@ -137,7 +137,7 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
         Pattern(List(0., 1.), List(1.)),
         Pattern(List(0., 0.), List(0.))
       ),
-      iterations = 2000
+      iterations = 5000
     )
 
     // run
