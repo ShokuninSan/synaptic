@@ -41,7 +41,7 @@ trait BackpropagationTrainer {
       for {
         _ <- run(inputs)
         _ <- backPropagate(outputs)
-        delta <- adjust
+        delta <- applyDeltaRule
       } yield delta
     for (i <- 1 to iterations) {
       patterns map {
@@ -55,7 +55,7 @@ trait BackpropagationTrainer {
   private def backPropagate(outs: List[Double]): Future[List[Double]] =
     Future.sequence(layers.last.zip(0 until outs.length) map (t => t._1.backPropagate(outs(t._2))))
 
-  private def adjust: Future[List[Double]] =
-    Future.sequence(layers flatMap { _ map (_ adjust) })
+  private def applyDeltaRule: Future[List[Double]] =
+    Future.sequence(layers flatMap { _ map (_ applyDeltaRule) })
 
 }

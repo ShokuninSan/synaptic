@@ -47,13 +47,13 @@ class Dendrite(neuron: Neuron, private var weight: Double) {
    *   f'(netj) (tj-oj)           ... in case of an output Neuron, or
    *   f'(netj) sum(deltak * wjk) ... in case of a hidden Neuron
    *
-   * This function is intended to be called from within the [[perceptron.Neuron.adjust]] function.
+   * This function is intended to be called from within the [[perceptron.Neuron.applyDeltaRule]] function.
    *
    * @param adjustment The result of the partial computation of the backpropagation rule which has all except the output
    *                   of the upstream Neuron, thus it's the result of i.e. `deltawij = eta * deltaj * _` where the _ is
    *                   the output which gets applied whithin this function finally.
    */
-  def adjust(adjustment: Double): Unit = weight += adjustment * neuron.out
+  def applyDeltaRule(adjustment: Double): Unit = weight += adjustment * neuron.out
 
   override def toString = s"$neuron - [ $weight ] ->"
 

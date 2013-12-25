@@ -28,7 +28,7 @@ trait Soma {
 
   def fire: Future[Double]
 
-  def adjust: Future[Double]
+  def applyDeltaRule: Future[Double]
 
   /**
    * This function is called on the output neuron within the training epochs.

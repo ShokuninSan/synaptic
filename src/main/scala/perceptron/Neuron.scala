@@ -132,9 +132,11 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
    *     Role of Bias in Neural Networks @ StackOverflow
    *   </a>
    */
-  override def adjust: Future[Double] = Future {
+  override def applyDeltaRule: Future[Double] = Future {
     val adjustment = learningRate * deltaj
-    dendrites.foreach(_.adjust(adjustment))
+    // 1) apply delta rule to the weights of the input neurons
+    dendrites.foreach(_.applyDeltaRule(adjustment))
+    // 2) apply delta rule to the Bias
     bias += adjustment
     bias
   }
