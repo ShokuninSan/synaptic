@@ -163,7 +163,7 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
     )
 
     // run
-    Util.await(net.run(List(1.,.0,.0,1.,.0,1.,.0,.0,1.,.0,1.,.0,.0,1.,.0,1.,1.,1.,1.,1.,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0))) should be (List(.0,.0,.0,.0,1.,.0,.0,.0,.0,.0))
+    Util.await(net.run(List(1.,.0,.0,1.,.0,1.,.0,.0,1.,.0,1.,.0,.0,1.,.0,1.,1.,1.,1.,1.,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0))) should be (List(.0,.0,.0,.0,1.))
   }
 
 //  it should "be able to recognize ten letters" in {
