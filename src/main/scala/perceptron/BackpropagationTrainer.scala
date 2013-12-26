@@ -47,13 +47,14 @@ trait BackpropagationTrainer {
     def satisfactory(input: List[Double], output: List[Double]): Boolean =
       ((input zip output).foldLeft(0.0)((a,b) => a + abs(b._1 + b._2)) <= 0.01)
     for {
-      _ <- 1 to iterations
+      i <- (1 to iterations).reverse
       t <-
         patterns map {
           _ match {
             case Pattern(input, output) => (Util.await(go(input, output)), output)
           }
         }
+      _ <- if (autoAdjust) adjustLearningRate(i, iterations) else Nil
       if (!(satisfactory _).tupled(t))
     } yield ()
   }
@@ -63,5 +64,20 @@ trait BackpropagationTrainer {
 
   private def applyDeltaRule: Future[List[Double]] =
     Future.sequence(layers flatMap { _ map (_ applyDeltaRule) })
+
+  private def adjustLearningRate(iteration: Int, iterations: Int) = {
+    val i = BigDecimal(iteration).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+    val is = BigDecimal(iterations).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+    layers map { _ map
+      { neuron =>
+        val initialEta = BigDecimal(neuron.initialLearningRate).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+        val newEta = ((initialEta/100) * ((i/is * 100))).toDouble
+        if (newEta >= 0.1)
+          neuron.learningRate = newEta
+        else
+          neuron.learningRate = 0.1
+      }
+    }
+  }
 
 }

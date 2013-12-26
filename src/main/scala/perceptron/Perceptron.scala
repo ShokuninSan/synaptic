@@ -4,7 +4,7 @@ import ActivationFunctions._
 import scala.concurrent.{Future, ExecutionContext}
 import ExecutionContext.Implicits.global
 
-class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = HyperbolicTangent) extends BackpropagationTrainer {
+class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = HyperbolicTangent, val learningRate: Double = 0.1, val autoAdjust: Boolean = false) extends BackpropagationTrainer {
 
   val layers: List[List[Neuron]] = spanNetwork(layout)
 
@@ -24,7 +24,7 @@ class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Hype
     }.reverse.tail
 
   private def createLayer(name: String, n: Int, lower: List[Neuron]): List[Neuron] =
-    (0 until n) map { n => Neuron(s"$name-Neuron($n)", lower, activation)} toList
+    (0 until n) map { n => Neuron(s"$name-Neuron($n)", lower, activation, learningRate)} toList
 
   override def toString = layers.mkString("\n")
 }

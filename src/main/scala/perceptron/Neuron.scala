@@ -6,8 +6,9 @@ import ActivationFunctions._
 import scala.concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
 
-abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma with Activation {
+abstract class Neuron(val name: String, inputLayer: List[Neuron], val initialLearningRate: Double = .1) extends Soma with Activation {
 
+  learningRate = initialLearningRate
   val dendrites: List[Dendrite] = connect(inputLayer)
 
   /**
@@ -161,9 +162,9 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron]) extends Soma w
 
 object Neuron {
 
-  def apply(name: String, lower: List[Neuron], activation: ActivationFunctions.Value): Neuron = activation match {
-    case HyperbolicTangent => new Neuron(name, lower) with HyperbolicTangent
-    case Sigmoid => new Neuron(name, lower) with Sigmoid
+  def apply(name: String, lower: List[Neuron], activation: ActivationFunctions.Value, learningRate: Double): Neuron = activation match {
+    case HyperbolicTangent => new Neuron(name, lower, learningRate) with HyperbolicTangent
+    case Sigmoid => new Neuron(name, lower, learningRate) with Sigmoid
   }
 
 }
