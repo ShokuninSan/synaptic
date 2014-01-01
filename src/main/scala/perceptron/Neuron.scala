@@ -67,20 +67,6 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron], val initialLea
   def out: Double = output
 
   /**
-   * This function is called when the Neuron is an output Neuron.
-   *
-   * This function is the counterpart of the [[perceptron.Neuron.feed()]] function. It should be called only on output
-   * Neurons. This function initiates back propagation for it's path by calling it's own [[perceptron.Neuron.updateError()]]
-   * function.
-   *
-   * The passed value is the expected output which is given by corresponding training sample (pattern).
-   *
-   * @param expected value for output neuron
-   * @return the updated delta/error of this Neuron
-   */
-  override def backPropagate(expected: Double): Future[Double] = updateError(expected - output)
-
-  /**
    * Prepare Neuron for backpropagation.
    *
    * Step 1 of backpropagation. This function calculates the delta as part of the backpropagation algorithm:

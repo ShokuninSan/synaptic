@@ -30,20 +30,6 @@ trait Soma {
 
   def applyDeltaRule: Future[Double]
 
-  /**
-   * This function is called on the output neuron within the training epochs.
-   *
-   * Once this function is called on the output neuron, the whole networks neurons
-   * will be updated recursively, i.e. their 'error' field gets updated by a delta
-   * (which is calculated on the dendrites &rarr; delta * weight.
-   *
-   * Both, the expectation and {Neuron, Dentrite}.updateError functions form the
-   * backpropagation-rule.
-   *
-   * @param expected value for output neuron
-   */
-  def backPropagate(expected: Double): Future[Double]
-
   def updateError(delta: Double): Future[Double]
 
 }

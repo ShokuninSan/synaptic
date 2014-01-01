@@ -37,32 +37,36 @@ trait BackpropagationTrainer {
    * @param patterns The training data
    * @param iterations Number of max iterations
    */
-  def train(patterns: List[Pattern], iterations: Int): Unit = {
-    def go(inputs: List[Double], outputs: List[Double]): Future[List[Double]] =
-      for {
-        output <- run(inputs)
-        _ <- backPropagate(outputs)
-        _ <- applyDeltaRule
-      } yield output
-    def satisfactory(input: List[Double], output: List[Double]): Boolean = {
-      println(s"expected($output), actual($input)")
-      ((input zip output).foldLeft(0.0)((a,b) => a + abs(b._1 + b._2)) <= 0.01)
-    }
+  def train(patterns: List[Pattern], iterations: Int): Unit =
     for {
       i <- (1 to iterations).reverse
-      t <-
-        patterns map {
-          _ match {
-            case Pattern(input, output) => (Util.await(go(input, output)), output)
-          }
-        }
-      _ <- if (autoAdjust) adjustLearningRate(i, iterations) else Nil
-      if (!(satisfactory _).tupled(t))
-    } yield ()
-  }
+      t <- epoch(patterns)
+    } yield
+      if(autoAdjust) adjustLearningRate(i, iterations)
 
-  private def backPropagate(outs: List[Double]): Future[List[Double]] =
-    Future.sequence(layers.last.zip(0 until outs.length) map (t => t._1.backPropagate(outs(t._2))))
+  private def epoch(patterns: List[Pattern]) =
+    patterns map {
+      _ match {
+        case Pattern(input, output) => (Util.await(go(input, output)), output)
+      }
+    }
+
+  private def go(input: List[Double], output: List[Double]): Future[List[Double]] =
+    for {
+      o <- run(input)
+      _ <- backPropagate(output)
+    } yield o
+
+  private def backPropagate(outs: List[Double]) =
+    for {
+      _ <- updateError(outs)
+      _ <- applyDeltaRule
+    } yield ()
+
+  private def updateError(outs: List[Double]): Future[List[Double]] =
+    Future.sequence(layers.last.zip(0 until outs.length) map {
+      case (neuron, i) => neuron.updateError(outs(i) - neuron.output)
+    })
 
   private def applyDeltaRule: Future[List[Double]] =
     Future.sequence(layers flatMap { _ map (_ applyDeltaRule) })
@@ -70,7 +74,7 @@ trait BackpropagationTrainer {
   private def adjustLearningRate(iteration: Int, iterations: Int) = {
     val i = BigDecimal(iteration).setScale(2, BigDecimal.RoundingMode.HALF_UP)
     val is = BigDecimal(iterations).setScale(2, BigDecimal.RoundingMode.HALF_UP)
-    layers map { _ map
+    layers foreach { _ map
       { neuron =>
         val initialEta = BigDecimal(neuron.initialLearningRate).setScale(2, BigDecimal.RoundingMode.HALF_UP)
         val newEta = ((initialEta/100) * ((i/is * 100))).toDouble
