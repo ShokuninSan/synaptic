@@ -46,9 +46,7 @@ trait BackpropagationTrainer {
 
   private def epoch(patterns: List[Pattern]) =
     patterns map {
-      _ match {
-        case Pattern(input, output) => (Util.await(go(input, output)), output)
-      }
+      case Pattern(input, output) => (Util.await(go(input, output)), output)
     }
 
   private def go(input: List[Double], output: List[Double]): Future[List[Double]] =
