@@ -3,6 +3,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class Dendrite(neuron: Neuron, private var weight: Double) {
 
+  private var delta: Double = .0
+
   /**
    * Computes the input of the upstream Neuron.
    *
@@ -53,7 +55,11 @@ class Dendrite(neuron: Neuron, private var weight: Double) {
    *                   of the upstream Neuron, thus it's the result of i.e. `deltawij = eta * deltaj * _` where the _ is
    *                   the output which gets applied whithin this function finally.
    */
-  def applyDeltaRule(adjustment: Double): Unit = weight += adjustment * neuron.out
+  def applyDeltaRule(adjustment: Double): Unit = {
+    val newDelta = adjustment * neuron.out
+    weight += (newDelta + delta * neuron.momentum)
+    delta = newDelta
+  }
 
   override def toString = s"$neuron - [ $weight ] ->"
 
