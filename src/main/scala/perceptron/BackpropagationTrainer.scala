@@ -40,12 +40,14 @@ trait BackpropagationTrainer {
   def train(patterns: List[Pattern], iterations: Int): Unit = {
     def go(inputs: List[Double], outputs: List[Double]): Future[List[Double]] =
       for {
-        _ <- run(inputs)
+        output <- run(inputs)
         _ <- backPropagate(outputs)
-        output <- applyDeltaRule
+        _ <- applyDeltaRule
       } yield output
-    def satisfactory(input: List[Double], output: List[Double]): Boolean =
+    def satisfactory(input: List[Double], output: List[Double]): Boolean = {
+      println(s"expected($output), actual($input)")
       ((input zip output).foldLeft(0.0)((a,b) => a + abs(b._1 + b._2)) <= 0.01)
+    }
     for {
       i <- (1 to iterations).reverse
       t <-

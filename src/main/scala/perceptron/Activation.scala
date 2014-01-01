@@ -40,6 +40,6 @@ trait Sigmoid extends Activation {
 
   def derivativeFunction(out: Double) = out * (1. - out)
 
-  def activationFunction(x: Double) = 1. / (1. + exp (-x))
+  def activationFunction(x: Double) = 1. / (1. + exp (-1 * x))
 
 }
