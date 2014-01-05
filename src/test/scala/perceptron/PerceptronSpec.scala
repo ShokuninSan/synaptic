@@ -148,7 +148,7 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
   }
 
   it should "be able to recognize ten letters using sigmoid activation" in {
-    val net = new Perceptron(List(50, 60, 10), Sigmoid)
+    val net = new Perceptron(List(50, 100, 10), Sigmoid, momentum = 0.1)
 
     // training
     net.train(
@@ -164,7 +164,7 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
         Pattern(List(1.,1.,1.,1.,1.,1.,.0,.0,.0,1.,1.,.0,.0,.0,1.,1.,1.,1.,1.,1.,.0,1.,1.,1.,1.,1.,1.,.0,.0,1.,1.,.0,.0,.0,1.,1.,1.,1.,1.,1.), List(.0,.0,.0,.0,.0,.0,.0,.0,1.,.0)),
         Pattern(List(1.,1.,1.,1.,1.,1.,1.,.0,.0,1.,1.,.0,.0,.0,1.,1.,1.,1.,1.,1.,.0,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0,.0,.0,.0,1.,.0,.0,.0,.0,1.), List(.0,.0,.0,.0,.0,.0,.0,.0,.0,1.))
       ),
-      iterations = 1500
+      iterations = 150
     )
 
     // run
