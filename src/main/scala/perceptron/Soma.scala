@@ -19,7 +19,7 @@ trait Soma {
    *                  </a>
    * learningRate ... the learning rate Eta
    */
-  var (error, bias, learningRate) = (0.0, Util.randomBiasWeight, 0.1)
+  var (error, bias, learningRate) = (0.0, Util.randomWeight, 0.1)
 
   def input: Double
 

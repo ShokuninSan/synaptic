@@ -138,7 +138,7 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron], val initialLea
    */
   private def connect(inputLayer: List[Neuron]): List[Dendrite] =
     inputLayer.map { neuron =>
-      new Dendrite(neuron, Util.randomNeuronWeight(inputLayer.length))
+      new Dendrite(neuron, Util.randomWeight)
     }
 
   override def toString = s"${dendrites.mkString(",")} $name\n"
