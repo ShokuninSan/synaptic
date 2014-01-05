@@ -4,7 +4,7 @@ import ActivationFunctions._
 import scala.concurrent.{Future, ExecutionContext}
 import ExecutionContext.Implicits.global
 
-class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = HyperbolicTangent, val learningRate: Double = 0.1, val autoAdjust: Boolean = false, val momentum: Double = .9) extends BackpropagationTrainer {
+class Perceptron(layout: List[Int], activation: ActivationFunctions.Value = Sigmoid, val learningRate: Double = 0.1, val autoAdjust: Boolean = false, val momentum: Double = .9) extends BackpropagationTrainer {
 
   val layers: List[List[Neuron]] = spanNetwork(layout)
 

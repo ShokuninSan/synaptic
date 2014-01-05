@@ -12,11 +12,11 @@ import scala.concurrent.{Future, Await}
 @RunWith(classOf[JUnitRunner])
 class PerceptronSpec extends FlatSpec with ShouldMatchers {
 
-  "A Perceptron" should "be able to solve XOR" in {
+  "A Perceptron" should "be able to solve XOR using hyperbolic tangent activation" in {
 
     // The index of the list represents the layer # and the
     // integer value the amount of neurons in that layer.
-    val net = new Perceptron(List(2,3,2,1))
+    val net = new Perceptron(List(2,3,2,1), HyperbolicTangent)
 
     // training
     net.train(
@@ -36,9 +36,9 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
     Util.await(net.run(List(-1.0, -1.0))).head should be (-1.0 plusOrMinus 0.2)
   }
 
-  it should "be able to solve OR" in {
+  it should "be able to solve OR using hyperbolic tangent activation" in {
 
-    val net = new Perceptron(List(2,3,2,1))
+    val net = new Perceptron(List(2,3,2,1), HyperbolicTangent)
 
     // training
     net.train(
@@ -59,9 +59,9 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
   }
 
 
-  it should "be able to solve AND" in {
+  it should "be able to solve AND using hyperbolic tangent activation" in {
 
-    val net = new Perceptron(List(2,3,2,1))
+    val net = new Perceptron(List(2,3,2,1), HyperbolicTangent)
 
     // training
     net.train(
@@ -81,9 +81,9 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
     Util.await(net.run(List(-1.0, -1.0))).head should be (-1.0 plusOrMinus 0.2)
   }
 
-  it should "be able to solve NOT" in {
+  it should "be able to solve NOT using hyperbolic tangent activation" in {
 
-    val net = new Perceptron(List(2,3,2,1))
+    val net = new Perceptron(List(2,3,2,1), HyperbolicTangent)
 
     // training
     net.train(
@@ -103,9 +103,53 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
     Util.await(net.run(List(-1.0, -1.0))).head should be (1.0 plusOrMinus 0.2)
   }
 
-  it should "be able to solve NOT with Sigmoid activation function" in {
+  it should "be able to solve AND with sigmoid activation" in {
 
-    val net = new Perceptron(List(2,2,1), Sigmoid)
+    val net = new Perceptron(List(2,2,1))
+
+    // training
+    net.train(
+      List(
+        Pattern(List(1., 1.), List(1.)),
+        Pattern(List(1., 0.), List(0.)),
+        Pattern(List(0., 1.), List(0.)),
+        Pattern(List(0., 0.), List(0.))
+      ),
+      iterations = 1000
+    )
+
+    // run
+    Util.await(net.run(List(1., 1.))).head should be (1. plusOrMinus 0.2)
+    Util.await(net.run(List(0., 1.))).head should be (0. plusOrMinus 0.2)
+    Util.await(net.run(List(1., 0.))).head should be (0. plusOrMinus 0.2)
+    Util.await(net.run(List(0., 0.))).head should be (0. plusOrMinus 0.2)
+  }
+
+  it should "be able to solve OR with sigmoid activation" in {
+
+    val net = new Perceptron(List(2,2,1))
+
+    // training
+    net.train(
+      List(
+        Pattern(List(1., 1.), List(1.)),
+        Pattern(List(1., 0.), List(1.)),
+        Pattern(List(0., 1.), List(1.)),
+        Pattern(List(0., 0.), List(0.))
+      ),
+      iterations = 1000
+    )
+
+    // run
+    Util.await(net.run(List(1., 1.))).head should be (1. plusOrMinus 0.2)
+    Util.await(net.run(List(0., 1.))).head should be (1. plusOrMinus 0.2)
+    Util.await(net.run(List(1., 0.))).head should be (1. plusOrMinus 0.2)
+    Util.await(net.run(List(0., 0.))).head should be (0. plusOrMinus 0.2)
+  }
+
+  it should "be able to solve NOT with sigmoid activation" in {
+
+    val net = new Perceptron(List(2,2,1))
 
     // training
     net.train(
@@ -125,9 +169,9 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
     Util.await(net.run(List(0., 0.))).head should be (1. plusOrMinus 0.2)
   }
 
-  it should "be able to solve XOR with Sigmoid activation function" in {
+  it should "be able to solve XOR with sigmoid activation" in {
 
-    val net = new Perceptron(List(2,3,1), Sigmoid)
+    val net = new Perceptron(List(2,3,1))
 
     // training
     net.train(
@@ -148,7 +192,7 @@ class PerceptronSpec extends FlatSpec with ShouldMatchers {
   }
 
   it should "be able to recognize ten letters using sigmoid activation" in {
-    val net = new Perceptron(List(50, 100, 10), Sigmoid, momentum = 0.1)
+    val net = new Perceptron(List(50, 100, 10), momentum = 0.1)
 
     // training
     net.train(
