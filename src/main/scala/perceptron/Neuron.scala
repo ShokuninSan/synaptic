@@ -1,7 +1,5 @@
 package perceptron
 
-import scala.math._
-import scala.util.Random
 import ActivationFunctions._
 import scala.concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
@@ -135,12 +133,13 @@ abstract class Neuron(val name: String, inputLayer: List[Neuron], val initialLea
    * corrensponding input layer, i.e. either input Neurons or Neurons of a hidden layer. The Dendrites are created
    * with a random weight. The weights are choosen randomly between -1 and +1.
    *
-   * @param ns `List[Neuron]` List of input Neurons
+   * @param inputLayer `List[Neuron]` List of input Neurons
    * @return `List[Dendrite]` which is added to the immutable `dendrites` property on instantiation of this Neuron
    */
-  private def connect(ns: List[Neuron]): List[Dendrite] = ns.map { n =>
-    new Dendrite(n, (new Random).nextDouble * 2 * pow(ns.size, -0.5) - 1)
-  }
+  private def connect(inputLayer: List[Neuron]): List[Dendrite] =
+    inputLayer.map { neuron =>
+      new Dendrite(neuron, Util.randomNeuronWeight(inputLayer.length))
+    }
 
   override def toString = s"${dendrites.mkString(",")} $name\n"
 

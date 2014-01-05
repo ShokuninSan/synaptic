@@ -1,6 +1,5 @@
 package perceptron
 
-import scala.util.Random
 import scala.concurrent.Future
 
 trait Soma {
@@ -20,7 +19,7 @@ trait Soma {
    *                  </a>
    * learningRate ... the learning rate Eta
    */
-  var (error, bias, learningRate) = (0.0, (new Random).nextDouble * 2.0 - 1.0, 0.1)
+  var (error, bias, learningRate) = (0.0, Util.randomBiasWeight, 0.1)
 
   def input: Double
 
