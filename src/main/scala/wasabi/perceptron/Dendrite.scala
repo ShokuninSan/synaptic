@@ -1,4 +1,5 @@
-package perceptron
+package wasabi.perceptron
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class Dendrite(neuron: Neuron, private var weight: Double) {

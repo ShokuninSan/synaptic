@@ -1,4 +1,4 @@
-package perceptron
+package wasabi.perceptron
 
 import ActivationFunctions._
 import scala.concurrent.{ExecutionContext, Future}

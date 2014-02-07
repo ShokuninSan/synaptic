@@ -1,4 +1,4 @@
-package perceptron
+package wasabi.perceptron
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._

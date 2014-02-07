@@ -1,4 +1,4 @@
-package perceptron
+package wasabi.perceptron
 
 
 import org.scalatest._
