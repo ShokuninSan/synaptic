@@ -1,4 +1,4 @@
-package wasabi.perceptron
+package synaptic.perceptron
 
 import scala.concurrent.Future
 
