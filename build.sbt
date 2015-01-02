@@ -1,4 +1,4 @@
-name := "Wasabi"
+name := "synaptic"
 
 version := "0.0.1"
 
